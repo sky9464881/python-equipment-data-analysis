@@ -159,11 +159,13 @@ integrated_project/
 - **리포트**: `results/reports/`
 
 예시 이미지:
+<img width="6427" height="4145" alt="integrated_dashboard" src="https://github.com/user-attachments/assets/ff13a743-efb9-492a-812f-332d6fedebf8" />
 
+<img width="3637" height="2720" alt="oee_gauge" src="https://github.com/user-attachments/assets/c5b74375-1893-4190-9c29-f95c7738463c" />
 
-![integrated_dashboard](results/charts/integrated_dashboard.png)
-![oee_gauge](results/charts/oee_gauge.png)
-![oee_trend](results/charts/oee_trend.png)
+<img width="4275" height="2528" alt="oee_trend" src="https://github.com/user-attachments/assets/ecb74abe-0bdb-4ed4-b217-ba7e53a5875e" />
+
+<img width="4588" height="2018" alt="six_big_losses" src="https://github.com/user-attachments/assets/3ef08bd2-2b9a-400f-8e00-8e0532c387b8" />
 
 
 ---
