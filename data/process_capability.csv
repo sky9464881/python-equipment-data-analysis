@@ -1,0 +1,4 @@
+﻿product_id,target,spec_upper,spec_lower,mean,std,Cp,Cpk,CPU,CPL,grade
+PROD-A,10.0,10.1,9.9,10.0,0.04,0.833,0.833,0.833,0.833,Poor
+PROD-B,20.0,20.2,19.8,20.02,0.05,1.333,1.2,1.2,1.467,Adequate
+PROD-C,50.0,50.5,49.5,49.98,0.08,2.083,2.0,2.167,2.0,Excellent

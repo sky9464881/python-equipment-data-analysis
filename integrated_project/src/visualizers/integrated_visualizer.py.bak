@@ -1,0 +1,413 @@
+"""
+통합 시각화 모듈
+
+모든 분석 결과를 시각화
+"""
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import seaborn as sns
+import os
+from typing import Dict, List
+from pathlib import Path
+
+from config import (FONT_NAME, COLORS, PLOT_CONFIG, 
+                   CHARTS_DIR, OEE_TARGETS, QUALITY_TARGETS)
+from utils import logger, save_figure
+
+# ============================================
+# 한글 폰트 명시적 설정
+# ============================================
+
+# Malgun Gothic 폰트 직접 등록
+malgun_path = 'C:\\Windows\\Fonts\\malgun.ttf'
+if os.path.exists(malgun_path):
+    fm.fontManager.addfont(malgun_path)
+
+# rcParams에 한글 폰트 설정
+plt.rcParams['font.family'] = 'Malgun Gothic'
+plt.rcParams['font.sans-serif'] = ['Malgun Gothic', 'NotoSansKR', 'DejaVu Sans']
+plt.rcParams['axes.unicode_minus'] = False
+plt.rcParams['axes.labelsize'] = 11
+plt.rcParams['xtick.labelsize'] = 10
+plt.rcParams['ytick.labelsize'] = 10
+
+# Use seaborn style
+sns.set_style("whitegrid")
+
+
+class IntegratedVisualizer:
+    """통합 시각화 클래스"""
+    
+    def __init__(self, output_dir: Path = CHARTS_DIR):
+        """초기화"""
+        self.output_dir = output_dir
+        self.figures = {}
+        # 폰트 설정 (인스턴스 생성 시에도 명시)
+        self._setup_fonts()
+    
+    def _setup_fonts(self):
+        """폰트 설정 헬퍼 함수"""
+        plt.rcParams['font.family'] = 'Malgun Gothic'
+        plt.rcParams['axes.unicode_minus'] = False
+    
+    # ============================================
+    # OEE 시각화
+    # ============================================
+    
+    def plot_oee_gauge(self, metrics: Dict) -> plt.Figure:
+        """OEE 게이지 차트"""
+        
+        self._setup_fonts()  # 폰트 재설정
+        
+        fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+        fig.suptitle('OEE 현황', fontsize=16, fontweight='bold', y=1.02, fontfamily='Malgun Gothic')
+        
+        data = [
+            ('가동률', metrics['availability'], 90),
+            ('성능률', metrics['performance'], 95),
+            ('양품률', metrics['quality'], 99),
+            ('OEE', metrics['oee'], 85)
+        ]
+        
+        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+        
+        for ax, (label, value, target), color in zip(axes, data, colors):
+            # 배경
+            ax.barh([0], [100], color='#f0f0f0', height=0.5)
+            
+            # 달성도 표시
+            fill_color = '#2ca02c' if value >= target else '#ff9800' if value >= target*0.9 else '#d62728'
+            ax.barh([0], [value], color=fill_color, height=0.5)
+            
+            # 텍스트
+            ax.text(50, 0, f'{value:.1f}%', ha='center', va='center',
+                   fontsize=18, fontweight='bold', color='white')
+            ax.text(50, -0.8, f'목표: {target}%', ha='center', fontsize=9)
+            
+            ax.set_xlim(0, 100)
+            ax.set_ylim(-1, 1)
+            ax.set_title(label, fontsize=12, fontweight='bold')
+            ax.axis('off')
+        
+        plt.tight_layout()
+        self.figures['oee_gauge'] = fig
+        return fig
+    
+    
+    def plot_equipment_comparison(self, df_equip: pd.DataFrame, top_n: int = 10) -> plt.Figure:
+        """설비 OEE 비교"""
+        
+        df = df_equip.head(top_n)
+        
+        fig, ax = plt.subplots(figsize=(12, 6))
+        
+        colors = ['#2ca02c' if x >= 85 else '#ff9800' if x >= 75 else '#d62728' 
+                 for x in df['oee']]
+        
+        bars = ax.barh(range(len(df)), df['oee'], color=colors, edgecolor='black', linewidth=1)
+        
+        ax.set_yticks(range(len(df)))
+        ax.set_yticklabels([f"{row['equipment_id']}({row['line']})" 
+                            for _, row in df.iterrows()])
+        ax.set_xlabel('OEE (%)', fontsize=11, fontweight='bold')
+        ax.set_title(f'상위 {top_n}개 설비 OEE', fontsize=13, fontweight='bold')
+        ax.axvline(x=85, color='red', linestyle='--', linewidth=2, label='목표 (85%)')
+        ax.set_xlim(0, 100)
+        ax.grid(axis='x', alpha=0.3)
+        ax.legend()
+        
+        # 값 표시
+        for i, (idx, row) in enumerate(df.iterrows()):
+            ax.text(row['oee'] + 1, i, f"{row['oee']:.1f}%", va='center', fontsize=9, fontweight='bold')
+        
+        plt.tight_layout()
+        self.figures['equipment_comparison'] = fig
+        return fig
+    
+    
+    def plot_line_comparison(self, df_line: pd.DataFrame) -> plt.Figure:
+        """라인별 비교"""
+        
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+        
+        # 막대 차트
+        colors_line = ['#1f77b4', '#ff7f0e', '#2ca02c'][:len(df_line)]
+        bars = ax1.bar(df_line['line'], df_line['oee'], color=colors_line, 
+                      edgecolor='black', linewidth=1.5)
+        ax1.axhline(y=85, color='red', linestyle='--', linewidth=2, label='목표')
+        ax1.set_ylabel('OEE (%)', fontweight='bold')
+        ax1.set_title('라인별 OEE', fontsize=13, fontweight='bold')
+        ax1.set_ylim(0, 100)
+        ax1.legend()
+        ax1.grid(axis='y', alpha=0.3)
+        
+        # 값 표시
+        for bar in bars:
+            height = bar.get_height()
+            ax1.text(bar.get_x() + bar.get_width()/2., height,
+                    f'{height:.1f}%', ha='center', va='bottom', fontweight='bold')
+        
+        # 레이더 차트
+        categories = ['가동률', '성능률', '양품률']
+        angles = np.linspace(0, 2*np.pi, len(categories), endpoint=False).tolist()
+        angles += angles[:1]
+        
+        ax2 = plt.subplot(122, projection='polar')
+        
+        for idx, row in df_line.iterrows():
+            values = [row['availability'], row['performance'], row['quality']]
+            values += values[:1]
+            ax2.plot(angles, values, 'o-', linewidth=2, label=row['line'])
+            ax2.fill(angles, values, alpha=0.15)
+        
+        ax2.set_xticks(angles[:-1])
+        ax2.set_xticklabels(categories, fontsize=10)
+        ax2.set_ylim(0, 100)
+        ax2.set_title('라인별 OEE 구성', fontsize=13, fontweight='bold', pad=20)
+        ax2.legend(loc='upper right', bbox_to_anchor=(1.3, 1.1))
+        ax2.grid(True)
+        
+        plt.tight_layout()
+        self.figures['line_comparison'] = fig
+        return fig
+    
+    
+    def plot_oee_trend(self, df_period: pd.DataFrame) -> plt.Figure:
+        """OEE 시계열 추이"""
+        
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8))
+        
+        x = range(len(df_period))
+        
+        # OEE 추이
+        ax1.plot(x, df_period['oee'], marker='o', linewidth=2.5, markersize=8, 
+                label='OEE', color='#d62728')
+        ax1.axhline(y=85, color='green', linestyle='--', linewidth=2, label='목표')
+        ax1.fill_between(x, df_period['oee'], alpha=0.2, color='#d62728')
+        ax1.set_ylabel('OEE (%)', fontweight='bold')
+        ax1.set_title('OEE 주간 추이', fontsize=13, fontweight='bold')
+        ax1.set_ylim(50, 100)
+        ax1.legend()
+        ax1.grid(True, alpha=0.3)
+        ax1.set_xticklabels(df_period['period'], rotation=45, ha='right')
+        
+        # 3대 요소
+        ax2.plot(x, df_period['availability'], marker='s', label='가동률', linewidth=2)
+        ax2.plot(x, df_period['performance'], marker='^', label='성능률', linewidth=2)
+        ax2.plot(x, df_period['quality'], marker='o', label='양품률', linewidth=2)
+        ax2.set_ylabel('(%)', fontweight='bold')
+        ax2.set_xlabel('기간', fontweight='bold')
+        ax2.set_title('OEE 구성요소 추이', fontsize=13, fontweight='bold')
+        ax2.set_ylim(70, 100)
+        ax2.legend()
+        ax2.grid(True, alpha=0.3)
+        ax2.set_xticklabels(df_period['period'], rotation=45, ha='right')
+        
+        plt.tight_layout()
+        self.figures['oee_trend'] = fig
+        return fig
+    
+    
+    # ============================================
+    # 데이터 손실 분석
+    # ============================================
+    
+    def plot_six_big_losses(self, df_losses: pd.DataFrame) -> plt.Figure:
+        """Six Big Losses"""
+        
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+        
+        # 파이 차트
+        colors = plt.cm.Set3(np.linspace(0, 1, len(df_losses)))
+        wedges, texts, autotexts = ax1.pie(df_losses['total_min'],
+                                           labels=df_losses.index,
+                                           autopct='%1.1f%%',
+                                           colors=colors,
+                                           startangle=90)
+        ax1.set_title('비가동 유형별 구성비', fontsize=13, fontweight='bold')
+        
+        for autotext in autotexts:
+            autotext.set_color('white')
+            autotext.set_fontweight('bold')
+        
+        # 막대 차트
+        bars = ax2.bar(range(len(df_losses)), df_losses['total_hours'], color=colors,
+                      edgecolor='black', linewidth=1)
+        ax2.set_xticks(range(len(df_losses)))
+        ax2.set_xticklabels(df_losses.index, rotation=45, ha='right')
+        ax2.set_ylabel('손실시간 (시간)', fontweight='bold')
+        ax2.set_title('비가동 유형별 손실', fontsize=13, fontweight='bold')
+        ax2.grid(axis='y', alpha=0.3)
+        
+        # 값 표시
+        for bar in bars:
+            height = bar.get_height()
+            ax2.text(bar.get_x() + bar.get_width()/2., height,
+                    f'{height:.0f}h', ha='center', va='bottom', fontweight='bold', fontsize=9)
+        
+        plt.tight_layout()
+        self.figures['six_big_losses'] = fig
+        return fig
+    
+    
+    # ============================================
+    # 개선 효과
+    # ============================================
+    
+    def plot_improvement(self, df_comp: pd.DataFrame) -> plt.Figure:
+        """개선 효과 비교"""
+        
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+        
+        # 전/후 비교
+        x_pos = np.arange(len(df_comp))
+        width = 0.35
+        
+        bars1 = ax1.bar(x_pos - width/2, df_comp['pre'], width, label='개선전',
+                       color='#d62728', alpha=0.8, edgecolor='black')
+        bars2 = ax1.bar(x_pos + width/2, df_comp['post'], width, label='개선후',
+                       color='#2ca02c', alpha=0.8, edgecolor='black')
+        
+        ax1.set_ylabel('(%)', fontweight='bold')
+        ax1.set_title('개선 전/후 비교', fontsize=13, fontweight='bold')
+        ax1.set_xticks(x_pos)
+        ax1.set_xticklabels(df_comp['metrics'], rotation=15, ha='right')
+        ax1.legend()
+        ax1.set_ylim(0, 105)
+        ax1.grid(axis='y', alpha=0.3)
+        
+        # 개선 효과
+        colors_imp = ['#2ca02c' if x > 0 else '#d62728' for x in df_comp['change_pp']]
+        bars = ax2.barh(range(len(df_comp)), df_comp['change_pp'], color=colors_imp,
+                       edgecolor='black', linewidth=1)
+        
+        ax2.set_yticks(range(len(df_comp)))
+        ax2.set_yticklabels(df_comp['metrics'])
+        ax2.set_xlabel('개선효과 (p.p)', fontweight='bold')
+        ax2.set_title('개선효과 분석', fontsize=13, fontweight='bold')
+        ax2.axvline(x=0, color='black', linewidth=1)
+        ax2.grid(axis='x', alpha=0.3)
+        
+        # 값 표시
+        for i, bar in enumerate(bars):
+            width_bar = bar.get_width()
+            ax2.text(width_bar, bar.get_y() + bar.get_height()/2.,
+                    f'{width_bar:.2f}p.p', ha='left' if width_bar > 0 else 'right',
+                    va='center', fontweight='bold', fontsize=9)
+        
+        plt.tight_layout()
+        self.figures['improvement'] = fig
+        return fig
+    
+    
+    # ============================================
+    # 종합 대시보드
+    # ============================================
+    
+    def create_integrated_dashboard(self, analysis_results: Dict) -> plt.Figure:
+        """통합 분석 대시보드"""
+        
+        fig = plt.figure(figsize=(20, 12))
+        gs = fig.add_gridspec(3, 3, hspace=0.35, wspace=0.3)
+        
+        # 1. OEE 요약 (상단)
+        ax1 = fig.add_subplot(gs[0, :])
+        metrics = analysis_results.get('oee', {})
+        values = [metrics.get('availability', 0), metrics.get('performance', 0),
+                 metrics.get('quality', 0), metrics.get('oee', 0)]
+        colors_m = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+        
+        bars = ax1.bar(['가동률', '성능률', '양품률', 'OEE'], values,
+                      color=colors_m, alpha=0.7, edgecolor='black', linewidth=1.5)
+        ax1.axhline(y=85, color='red', linestyle='--', linewidth=2, alpha=0.7)
+        ax1.set_ylabel('(%)', fontweight='bold')
+        ax1.set_title('OEE 종합 현황', fontsize=14, fontweight='bold')
+        ax1.set_ylim(0, 110)
+        ax1.grid(axis='y', alpha=0.3)
+        
+        for bar, val in zip(bars, values):
+            ax1.text(bar.get_x() + bar.get_width()/2, val + 2, f'{val:.1f}%',
+                    ha='center', fontweight='bold', fontsize=11)
+        
+        # 2. 설비 랭킹 (좌측)
+        ax2 = fig.add_subplot(gs[1, :2])
+        equip_df = analysis_results.get('equipment_oee', pd.DataFrame()).head(8)
+        if not equip_df.empty:
+            bars = ax2.barh(equip_df['equipment_id'], equip_df['oee'],
+                           color=['#2ca02c' if x >= 85 else '#ff9800' if x >= 75 else '#d62728'
+                                 for x in equip_df['oee']])
+            ax2.axvline(x=85, color='red', linestyle='--', linewidth=2)
+            ax2.set_xlabel('OEE (%)')
+            ax2.set_title('상위 설비', fontsize=13, fontweight='bold')
+            ax2.set_xlim(0, 100)
+            ax2.grid(axis='x', alpha=0.3)
+        
+        # 3. 라인 비교 (우측)
+        ax3 = fig.add_subplot(gs[1, 2])
+        line_df = analysis_results.get('line_oee', pd.DataFrame())
+        if not line_df.empty:
+            colors_l = ['#1f77b4', '#ff7f0e', '#2ca02c'][:len(line_df)]
+            ax3.bar(line_df['line'], line_df['oee'], color=colors_l, edgecolor='black')
+            ax3.set_ylabel('OEE (%)')
+            ax3.set_title('라인별 OEE', fontsize=13, fontweight='bold')
+            ax3.set_ylim(0, 100)
+            ax3.grid(axis='y', alpha=0.3)
+        
+        # 4. 비가동 분석 (좌측 하단)
+        ax4 = fig.add_subplot(gs[2, :2])
+        losses_df = analysis_results.get('six_big_losses', pd.DataFrame())
+        if not losses_df.empty:
+            ax4.bar(range(len(losses_df)), losses_df['total_hours'],
+                   color=plt.cm.Set3(np.linspace(0, 1, len(losses_df))))
+            ax4.set_xticks(range(len(losses_df)))
+            ax4.set_xticklabels(losses_df.index, rotation=45, ha='right')
+            ax4.set_ylabel('손실시간 (시간)')
+            ax4.set_title('비가동 분석', fontsize=13, fontweight='bold')
+            ax4.grid(axis='y', alpha=0.3)
+        
+        # 5. 개선 효과 (우측 하단)
+        ax5 = fig.add_subplot(gs[2, 2])
+        improvement = analysis_results.get('improvement_comparison')
+        if improvement is not None and not improvement.empty:
+            colors_imp = ['#2ca02c' if x > 0 else '#d62728' for x in improvement['change_pp']]
+            ax5.barh(improvement['metrics'], improvement['change_pp'], color=colors_imp)
+            ax5.axvline(x=0, color='black', linewidth=0.8)
+            ax5.set_xlabel('개선효과 (p.p)')
+            ax5.set_title('개선 효과', fontsize=13, fontweight='bold')
+            ax5.grid(axis='x', alpha=0.3)
+        
+        fig.suptitle('팩토리 통합 분석 대시보드', fontsize=16, fontweight='bold', y=0.995)
+        
+        self.figures['integrated_dashboard'] = fig
+        return fig
+    
+    
+    # ============================================
+    # 저장
+    # ============================================
+    
+    def save_all(self) -> None:
+        """모든 차트 저장"""
+        
+        print("\n" + "=" * 60)
+        print("차트 저장 중...")
+        print("=" * 60)
+        
+        for name, fig in self.figures.items():
+            try:
+                path = self.output_dir / f"{name}.png"
+                fig.savefig(path, dpi=PLOT_CONFIG['dpi'], bbox_inches='tight')
+                print(f"  ✓ {path.name}")
+                plt.close(fig)
+            except Exception as e:
+                logger.error(f"  × {name}: {e}")
+        
+        print("=" * 60)
+        logger.info("✓ 모든 차트 저장 완료")
+
+
+if __name__ == "__main__":
+    print("시각화 모듈 준비 완료")

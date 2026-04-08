@@ -1,0 +1,8 @@
+date,shift,target_quantity,actual_quantity,good_quantity,defect_quantity
+2024-01-01,DAY,100,95,93,2
+2024-01-02,DAY,120,118,115,3
+2024-01-03,DAY,110,107,105,2
+2024-01-04,DAY,130,128,125,3
+2024-01-05,DAY,105,102,100,2
+2024-01-06,WEEKEND,0,0,0,0
+2024-01-07,WEEKEND,0,0,0,0

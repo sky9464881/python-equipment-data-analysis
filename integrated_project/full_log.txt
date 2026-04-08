@@ -1,0 +1,275 @@
+2026-04-08 14:46:57,961 - utils - INFO - ✓ 분석 환경 초기화 완료
+2026-04-08 14:46:58,186 - utils - ERROR - OEE 분석 실패: 'line'
+Traceback (most recent call last):
+  File "C:\Users\hwapyeong\miniconda3\Lib\site-packages\pandas\core\indexes\base.py", line 3641, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 168, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 197, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7668, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7676, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'line'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\hwapyeong\Documents\work\integrated_project\src\main.py", line 48, in run_oee_analysis
+    results = analyzer.run_full_analysis()
+  File "C:\Users\hwapyeong\Documents\work\integrated_project\src\analyzers\oee_analyzer.py", line 300, in run_full_analysis
+    line_oee = self.calculate_by_line()
+  File "C:\Users\hwapyeong\Documents\work\integrated_project\src\analyzers\oee_analyzer.py", line 136, in calculate_by_line
+    for line in self.prod['line'].unique():
+                ~~~~~~~~~^^^^^^^^
+  File "C:\Users\hwapyeong\miniconda3\Lib\site-packages\pandas\core\frame.py", line 4378, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\hwapyeong\miniconda3\Lib\site-packages\pandas\core\indexes\base.py", line 3648, in get_loc
+    raise KeyError(key) from err
+KeyError: 'line'
+2026-04-08 14:46:58,199 - utils - ERROR - 품질 분석 실패: 'NoneType' object has no attribute 'notna'
+Traceback (most recent call last):
+  File "C:\Users\hwapyeong\Documents\work\integrated_project\src\main.py", line 85, in run_quality_analysis
+    results = analyzer.run_full_analysis()
+  File "C:\Users\hwapyeong\Documents\work\integrated_project\src\analyzers\quality_analyzer.py", line 267, in run_full_analysis
+    (self.inspection.get('measurement_value').notna())
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'notna'
+2026-04-08 14:46:58,221 - utils - INFO - ✓ 설비 분석 완료
+2026-04-08 14:46:58,223 - utils - INFO -   → 저장: 03_maintenance_history.csv
+2026-04-08 14:46:58,224 - utils - INFO -   → 저장: 03_anomalies_detected.csv
+
+██████████████████████████████████████████████████████████████████████
+█                                                                    █
+█                       한국정밀산업(주) 통합 팩토리 분석 시스템                      █
+█                                                                    █
+██████████████████████████████████████████████████████████████████████
+
+
+████████████████████████████████████████████████████████████
+█  초기화                                                     █
+████████████████████████████████████████████████████████████
+
+
+████████████████████████████████████████████████████████████
+█  데이터 로드                                                  █
+████████████████████████████████████████████████████████████
+
+
+======================================================================
+                             데이터 로딩 중...                              
+======================================================================
+  ✓ equipment                 |      13 rows ×  7 cols
+  ✓ product                   |       6 rows ×  6 cols
+  ✓ production                |   3,120 rows × 13 cols
+  ✓ downtime                  |     427 rows × 10 cols
+  ✓ product_spec              |      24 rows ×  8 cols
+  ✓ inspection                |  42,560 rows × 16 cols
+  ✓ defect                    |     767 rows × 11 cols
+  ✓ process_params            |   1,716 rows × 12 cols
+  ✓ equipment_pm              |      12 rows ×  9 cols
+  ✓ sensor                    |  21,750 rows ×  7 cols
+  ✓ maintenance               |     230 rows × 10 cols
+  ✓ alarm                     |     132 rows ×  9 cols
+  ✓ equipment_energy          |      12 rows ×  9 cols
+  ✓ energy                    |  52,416 rows ×  6 cols
+  ✓ production_energy         |   1,275 rows ×  7 cols
+  ✓ tariff                    |       6 rows ×  6 cols
+======================================================================
+
+✓ 총 16개 데이터셋 로드 완료
+
+
+████████████████████████████████████████████████████████████
+█  프로젝트별 분석                                                █
+████████████████████████████████████████████████████████████
+
+
+==================================================
+▶ 프로젝트 1: OEE 분석
+==================================================
+
+
+████████████████████████████████████████████████████████████
+█  OEE 분석                                                  █
+████████████████████████████████████████████████████████████
+
+
+[1] 전체 OEE
+  OEE: 48.76%
+  가동률: 53.54%
+  성능률: 95.00%
+  양품률: 95.88%
+
+[2] 설비별 OEE (상위 10개)
+   equipment_id line    oee  quality
+6        EQ-B04  B라인  58.62    96.88
+4        EQ-B02  B라인  58.58    97.03
+11       EQ-B01  B라인  55.19    93.34
+8        EQ-C02  C라인  54.01    96.81
+7        EQ-C01  C라인  53.24    95.65
+5        EQ-B03  B라인  52.97    93.13
+9        EQ-C03  C라인  52.64    95.61
+10       EQ-C04  C라인  51.60    97.71
+0        EQ-A01  A라인  51.34    96.70
+3        EQ-A04  A라인  50.86    95.71
+
+[3] 라인별 OEE
+
+==================================================
+▶ 프로젝트 2: 품질관리 분석 (SPC)
+==================================================
+
+
+████████████████████████████████████████████████████████████
+█  품질관리 분석                                                 █
+████████████████████████████████████████████████████████████
+
+
+[1] 기본 품질 지표
+  검사 건수: 42,560건
+  합격: 40,909건 (96.12%)
+  불합격: 1,651건 (3.88%)
+
+[2] 불량 유형별 분석 (파레토)
+             total_qty  percentage  cumulative_pct
+defect_type                                       
+외관불량              2320       34.02           34.02
+치수불량              1824       26.75           60.77
+표면조도불량             879       12.89           73.66
+형상불량               852       12.49           86.15
+크랙                 507        7.44           93.59
+기타                 437        6.41          100.00
+
+[3] 공정능력 분석
+
+==================================================
+▶ 프로젝트 3: 설비관리 및 예지보전 분석
+==================================================
+
+
+████████████████████████████████████████████████████████████
+█  설비관리 및 예지보전 분석                                          █
+████████████████████████████████████████████████████████████
+
+
+[1] 센서 데이터 통계
+  temperature_c:
+    평균: 40.66, 표준편차: 3.28
+    범위: 30.80 ~ 66.80
+  vibration_mms:
+    평균: 1.87, 표준편차: 0.76
+    범위: 0.10 ~ 10.66
+  current_a:
+    평균: 13.63, 표준편차: 1.71
+    범위: 7.90 ~ 24.00
+  pressure_bar:
+    평균: 5.19, 표준편차: 0.29
+    범위: 4.12 ~ 6.21
+
+[2] 이상치 탐지
+  temperature_c_zscore: 119건
+  vibration_mms_warning: 50건
+  vibration_mms_zscore: 144건
+  current_a_zscore: 36건
+  pressure_bar_zscore: 42건
+
+[3] 열화 추세 분석
+  temperature_c: 증가 (기울기: 0.000143, p=0.0000)
+  vibration_mms: 증가 (기울기: 0.000005, p=0.0000)
+
+[4] 정비 분석
+                  total_hours  avg_hours  frequency      cost  cost_pct
+maintenance_type                                                       
+INS                     250.0       1.51        166   4915000     16.60
+BM                       56.0       1.93         29   2537000      8.57
+PM                       80.0       4.21         19   4775000     16.13
+CM                      404.0      26.93         15  17376000     58.70
+
+[5] 신뢰성 지표
+  mtbf_days: 12.0
+  mttr_hours: 26.93
+  availability_percent: 90.65
+  failure_count: 15
+
+[6] 설비 건강도
+  건강도 점수: 100/100 (정상)
+
+==================================================
+▶ 프로젝트 4: 에너지관리 및 효율성 분석
+==================================================
+
+
+████████████████████████████████████████████████████████████
+█  에너지 관리 및 효율성 분석                                         █
+████████████████████████████████████████████████████████████
+2026-04-08 14:46:58,225 - utils - INFO - ✓ 에너지 분석 완료
+2026-04-08 14:46:58,226 - utils - INFO -   → 저장: 04_energy_consumption.csv
+2026-04-08 14:46:58,227 - utils - INFO -   → 저장: 04_savings_opportunities.csv
+2026-04-08 14:46:58,515 - utils - ERROR -   × integrated_dashboard: FigureCanvasAgg.print_png() got an unexpected keyword argument 'encoding'
+2026-04-08 14:46:58,515 - utils - INFO - ✓ 모든 차트 저장 완료
+2026-04-08 14:46:58,516 - utils - INFO -   → 저장: 00_integrated_insights.md
+
+
+[1] 에너지 소비 현황
+
+[2] 에너지 효율성
+
+[3] 피크 로드 분석
+
+[4] 공정별 에너지 소비
+
+[5] 에너지 비용 분석
+
+[6] 에너지 절감 기회
+
+████████████████████████████████████████████████████████████
+█  시각화                                                     █
+████████████████████████████████████████████████████████████
+
+
+
+============================================================
+차트 저장 중...
+============================================================
+============================================================
+
+████████████████████████████████████████████████████████████
+█  통합 인사이트                                                 █
+████████████████████████████████████████████████████████████
+
+# 통합 분석 인사이트
+## 설비관리 분석
+- 각 설비의 정비 기록 구분 분석 필요
+
+## 에너지 분석
+- 총 전력 소비: 0 kWh
+- 평균 전력: 0.00 kW
+- 최대 전력: 0.00 kW
+
+## 권고사항
+1. OEE 목표 달성을 위해 비가동 원인 분석 필요
+2. 품질 지표 지속 모니터링
+3. 에너지 효율 개선 방안 수립
+
+
+████████████████████████████████████████████████████████████
+█  분석 완료                                                   █
+████████████████████████████████████████████████████████████
+
+📁 결과 경로: C:\Users\hwapyeong\Documents\work\integrated_project\results
+📊 생성 파일:
+
+  차트: 0개
+
+  데이터: 4개
+    - 03_anomalies_detected.csv
+    - 03_maintenance_history.csv
+    - 04_energy_consumption.csv
+    - 04_savings_opportunities.csv
+
+  리포트: 1개
+    - 00_integrated_insights.md
+
+██████████████████████████████████████████████████████████████████████
+█                         ✓ 모든 분석이 완료되었습니다!                          █
+██████████████████████████████████████████████████████████████████████
+

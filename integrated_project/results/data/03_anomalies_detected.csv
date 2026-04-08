@@ -1,0 +1,2 @@
+﻿temperature_c_warning,temperature_c_critical,temperature_c_zscore,vibration_mms_warning,vibration_mms_critical,vibration_mms_zscore,current_a_warning,current_a_critical,current_a_zscore,pressure_bar_warning,pressure_bar_critical,pressure_bar_zscore
+0,0,119,50,0,144,0,0,36,0,0,42

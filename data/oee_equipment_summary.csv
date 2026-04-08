@@ -1,0 +1,4 @@
+﻿equipment_id,availability_%,performance_%,quality_%,oee_%,actual_production_qty,good_qty,defect_qty,unplanned_downtime_min,oee_grade
+LINE-A-01,84.86,92.07,94.56,73.88,46497,43972,2525,4506,Good
+LINE-A-02,85.51,91.22,94.56,73.79,38679,36582,2097,4311,Good
+LINE-B-01,84.85,91.96,94.59,73.85,29013,27451,1562,4508,Good

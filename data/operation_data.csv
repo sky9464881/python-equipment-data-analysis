@@ -1,0 +1,4 @@
+equipment_id,running_hours,idle_hours,breakdown_hours
+INJ-001,18.5,3.5,2.0
+INJ-002,21.2,2.0,0.8
+PRESS-001,16.8,5.2,2.0

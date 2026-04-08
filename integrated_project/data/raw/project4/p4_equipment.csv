@@ -1,0 +1,13 @@
+﻿equipment_id,equipment_name,line,equipment_type,rated_power_kw,has_inverter,standby_power_kw,energy_grade,install_year
+EQ-A01,CNC선반-A1,A라인,CNC선반,22,False,3.5,4,2016
+EQ-A02,CNC선반-A2,A라인,CNC선반,22,False,3.2,4,2017
+EQ-A03,밀링머신-A3,A라인,밀링머신,30,False,4.5,5,2016
+EQ-A04,컴프레서-A4,A라인,컴프레서,15,False,2.8,3,2018
+EQ-B01,CNC선반-B1,B라인,CNC선반,18,True,0.8,1,2022
+EQ-B02,CNC선반-B2,B라인,CNC선반,18,True,0.7,1,2022
+EQ-B03,밀링머신-B3,B라인,밀링머신,25,True,1.2,2,2023
+EQ-B04,컴프레서-B4,B라인,컴프레서,11,True,0.5,1,2023
+EQ-C01,CNC선반-C1,C라인,CNC선반,20,False,2.2,3,2019
+EQ-C02,CNC선반-C2,C라인,CNC선반,20,False,2.0,3,2019
+EQ-C03,밀링머신-C3,C라인,밀링머신,28,False,3.0,3,2020
+EQ-C04,컴프레서-C4,C라인,컴프레서,13,False,1.8,2,2020

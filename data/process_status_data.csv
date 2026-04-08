@@ -1,0 +1,6 @@
+machine,status,shift
+CNC-01,running,morning
+CNC-02,idle,afternoon
+CNC-01,running,night
+CNC-03,maintenance,morning
+CNC-02,running,afternoon

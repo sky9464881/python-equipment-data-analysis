@@ -1,0 +1,6 @@
+machine,temp,speed,quality
+M1,25.5,1500,good
+M2,26.1,1520,good
+M1,24.8,1480,bad
+M3,25.9,1510,good
+M2,25.2,1490,bad

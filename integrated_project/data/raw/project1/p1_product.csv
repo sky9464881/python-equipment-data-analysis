@@ -1,0 +1,7 @@
+﻿product_code,product_name,standard_cycle_time_sec,category,weight_kg,target_defect_rate_pct
+PRD-001,베어링하우징-S,30,하우징,2.5,1.5
+PRD-002,베어링하우징-M,45,하우징,4.2,2.0
+PRD-003,샤프트-A,25,샤프트,1.8,1.0
+PRD-004,샤프트-B,35,샤프트,2.8,2.5
+PRD-005,기어박스커버,60,커버,5.5,3.0
+PRD-006,플랜지,20,플랜지,1.2,1.0

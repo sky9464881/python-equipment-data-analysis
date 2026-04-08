@@ -1,0 +1,4 @@
+product_code,product_name,specification,unit,standard_cycle_time,target_quality_rate,upper_spec_limit,lower_spec_limit,created_at,updated_at
+BUMPER-A,범퍼,1200x300x150mm,EA,75.00,98.50,305.0000,295.0000,2024-01-01 00:00:00,2024-01-01 00:00:00
+DOOR-B,도어패널,800x600x50mm,EA,65.00,99.00,605.0000,595.0000,2024-01-01 00:00:00,2024-01-01 00:00:00
+DASH-C,대시보드,1000x400x80mm,EA,85.00,98.00,405.0000,395.0000,2024-01-01 00:00:00,2024-01-01 00:00:00

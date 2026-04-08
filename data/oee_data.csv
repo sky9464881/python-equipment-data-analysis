@@ -1,0 +1,6 @@
+equipment_id,planned_time,downtime,target_cycle,actual_production,good_production
+INJ-001,480,45,75,350,343
+INJ-002,480,30,75,395,388
+PRESS-001,480,65,85,285,278
+PRESS-002,480,38,85,320,314
+ASM-001,480,52,100,245,240

@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\hwapyeong\Documents\work\integrated_project\src\main.py", line 368, in <module>
+    exit_code = main()
+  File "C:\Users\hwapyeong\Documents\work\integrated_project\src\main.py", line 238, in main
+    print("\n" + "\u2588" * 70)
+    ~~~~~^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'cp949' codec can't encode character '\u2588' in position 2: illegal multibyte sequence
