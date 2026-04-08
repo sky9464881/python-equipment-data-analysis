@@ -79,6 +79,17 @@ python src/main.py
 
 ---
 
+## 📊 분석 결과 샘플
+
+### 통합 대시보드
+![integrated_dashboard](integrated_project/results/charts/integrated_dashboard.png)
+
+### OEE 분석 결과
+![oee_gauge](integrated_project/results/charts/oee_gauge.png) 
+![oee_trend](integrated_project/results/charts/oee_trend.png)
+
+---
+
 ## � 4대 분석 모듈
 
 | 모듈 | 목표 | 핵심 지표 | 산출물 |
@@ -87,7 +98,17 @@ python src/main.py
 | **품질** | 공정 능력 개선 | Cpk, 합격률, 불량 유형 | 파레토 분석, SPC 차트 |
 | **정비** | 예기치 않은 고장 예방 | 건강도, 이상 징후, MTBF | 점검 포인트 추천 |
 | **에너지** | 비용 절감 | 원단위, 피크 분석 | 절감 기회, ROI |
+### 📈 설비 효율 비교
+![equipment_comparison](integrated_project/results/charts/equipment_comparison.png)
 
+### 📉 라인별 분석
+![line_comparison](integrated_project/results/charts/line_comparison.png)
+
+### 🎯 Six Big Losses 분석
+![six_big_losses](integrated_project/results/charts/six_big_losses.png)
+
+### 🔧 개선 효과
+![improvement](integrated_project/results/charts/improvement.png)
 ### 🔍 각 모듈별 워크플로우
 
 **1️⃣ OEE 분석** (설비 효율)
