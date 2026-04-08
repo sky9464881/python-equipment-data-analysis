@@ -5,6 +5,7 @@
 ---
 
 ## 프로젝트 소개
+<img width="6427" height="4145" alt="integrated_dashboard" src="https://github.com/user-attachments/assets/1cdd52e8-8d70-407c-a0fd-0079d15df5d0" />
 
 제조 현장에서는 생산, 품질, 정비, 에너지 데이터가 각각 분리되어 관리되는 경우가 많습니다.  
 이 프로젝트는 이러한 데이터를 **하나의 분석 흐름으로 통합**하여, 공장 운영 상태를 더 빠르고 직관적으로 파악할 수 있도록 구성했습니다.
@@ -159,11 +160,11 @@ integrated_project/
 
 예시 이미지:
 
-```md
+
 ![integrated_dashboard](results/charts/integrated_dashboard.png)
 ![oee_gauge](results/charts/oee_gauge.png)
 ![oee_trend](results/charts/oee_trend.png)
-```
+
 
 ---
 
